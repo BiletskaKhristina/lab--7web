@@ -1,0 +1,156 @@
+/* Стилі карток датчиків та фільтрів */
+.active-sensors {
+  padding: 24px;
+}
+
+.section-desc {
+  color: #5f6b7a;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+
+.sensor-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.sensor-filters label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  color: #5f6b7a;
+  gap: 5px;
+}
+
+.sensor-filters label:has(input[type="checkbox"]) {
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 500;
+  color: #14213d;
+  margin-top: 18px;
+}
+
+.sensor-filters select {
+  padding: 8px 12px;
+  border: 1px solid #d6e2ec;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  outline: none;
+  background: #fff;
+  cursor: pointer;
+}
+
+.sensor-filters input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.filter-hint {
+  font-size: 0.8rem;
+  color: #5f6b7a;
+  margin-bottom: 24px;
+}
+
+.sensors-grid,
+.sensor-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.sensor-card {
+  padding: 20px;
+  border: 1px solid #dedbd5;
+  border-left: 5px solid #777;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 4%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sensor-card.sensor-card--normal,
+.sensor-card.normal {
+  border-left-color: #27945b;
+}
+
+.sensor-card.sensor-card--warning,
+.sensor-card.warning {
+  border-left-color: #e3a126;
+}
+
+.sensor-card.sensor-card--critical,
+.sensor-card.critical {
+  border-left-color: #d84444;
+}
+
+.sensor-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sensor-card h3,
+.sensor-card__id {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #14213d;
+  margin: 0;
+}
+
+.sensor-card__status {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #f0efec;
+  width: fit-content;
+}
+
+.sensor-card.normal .sensor-card__status,
+.sensor-card.sensor-card--normal .sensor-card__status {
+  color: #187344;
+  background: #e8f5ed;
+}
+
+.sensor-card.warning .sensor-card__status,
+.sensor-card.sensor-card--warning .sensor-card__status {
+  color: #95620b;
+  background: #fff3d9;
+}
+
+.sensor-card.critical .sensor-card__status,
+.sensor-card.sensor-card--critical .sensor-card__status {
+  color: #a92c2c;
+  background: #fdeaea;
+}
+
+.sensor-card p,
+.sensor-card__address,
+.sensor-card__caption,
+.sensor-card__history {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #5f6b7a;
+}
+
+.sensor-card__value {
+  margin-top: 8px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #14213d;
+}
+
+.sensors-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 32px;
+  margin-bottom: 24px;
+}
