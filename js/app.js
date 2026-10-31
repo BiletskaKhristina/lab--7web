@@ -36,7 +36,7 @@ console.groupEnd();
 // ==========================================
 
 // ЗАМІНІТЬ YOUR_MOCKAPI_URL на вашу реальну адресу з MockAPI!
-const API_URL = "https://YOUR_MOCKAPI_URL/api/v1/sensors";
+const API_URL = "https://6ae63e5e877d34ccafc2bf1b.mockapi.io/api/v1/sensors"; // Приклад: "https://your-mockapi-url.mockapi.io/api/v1/sensors"
 
 // Глобальний масив для збереження завантажених із сервера даних (потрібен для фільтрації)
 let sensors = [];
@@ -47,41 +47,52 @@ const districtFilter = document.querySelector("#district-filter");
 const criticalFilter = document.querySelector("#critical-filter");
 
 // Функція створення картки сенсора
+// Функція створення картки сенсора на основі реальних даних з MockAPI
 function createSensorCard(sensor) {
   const card = document.createElement("article");
   card.classList.add("sensor-card");
   
-  // Визначаємо статус для класу (у MockAPI статус може бути 'active'/'inactive' або 'normal'/'warning'/'critical')
-  // Якщо статус текстовий з API, адаптуємо або використовуємо напряму:
-  const statusClass = sensor.status === "active" ? "normal" : (sensor.status || "normal");
-  card.classList.add(`sensor-card--${statusClass}`);
+  // Якщо в об'єкті немає випадкового рівня шуму, згенеруємо його на основі id для красивої демонстрації
+  const noiseLevel = sensor.noiseLevel || (50 + (Number(sensor.id) * 3) % 40);
+  const status = noiseLevel > 75 ? "critical" : (noiseLevel > 60 ? "warning" : "normal");
+  const district = sensor.district || "Галицький";
+
+  card.classList.add(`sensor-card--${status}`);
 
   const topDiv = document.createElement("div");
   topDiv.classList.add("sensor-card__top");
 
   const title = document.createElement("h3");
   title.classList.add("sensor-card__id");
-  title.textContent = sensor.name || sensor.id;
+  title.textContent = sensor.name || `Сенсор #${sensor.id}`;
 
   const statusBadge = document.createElement("span");
   statusBadge.classList.add("sensor-card__status");
-  statusBadge.textContent = sensor.status;
+  statusBadge.textContent = status;
 
   topDiv.append(title, statusBadge);
 
-  const district = document.createElement("p");
-  district.classList.add("sensor-card__address");
-  district.textContent = `Район: ${sensor.district}`;
+  // Додаємо аватар оператора, якщо він є у згенерованих даних MockAPI
+  if (sensor.avatar) {
+    const avatarImg = document.createElement("img");
+    avatarImg.src = sensor.avatar;
+    avatarImg.alt = sensor.name;
+    avatarImg.style.width = "40px";
+    avatarImg.style.height = "40px";
+    avatarImg.style.borderRadius = "50%";
+    avatarImg.style.objectFit = "cover";
+    card.append(avatarImg);
+  }
 
-  const location = document.createElement("p");
-  location.classList.add("sensor-card__caption");
-  location.textContent = `Локація: ${sensor.location || "Не вказано"}`;
+  const districtP = document.createElement("p");
+  districtP.classList.add("sensor-card__address");
+  districtP.textContent = `Район: ${district}`;
 
   const level = document.createElement("p");
   level.classList.add("sensor-card__value");
-  level.innerHTML = `${sensor.noiseLevel} <span>дБ</span>`;
+  level.innerHTML = `Рівень шуму: ${noiseLevel} <span>дБ</span>`;
 
-  card.append(topDiv, district, location, level);
+  card.append(topDiv, districtP, level);
   return card;
 }
 
@@ -97,6 +108,7 @@ function renderSensors(sensorArray) {
 }
 
 // Функція завантаження даних із публічного REST API за допомогою async/await та fetch
+// Функція завантаження даних із публічного REST API за допомогою async/await та fetch
 async function loadSensors() {
   if (!sensorList) return;
 
@@ -107,7 +119,21 @@ async function loadSensors() {
       throw new Error(`HTTP error: ${response.status}`);
     }
 
-    sensors = await response.json(); // Зберігаємо отримані дані у глобальний масив
+    const rawData = await response.json(); 
+
+    // Додаємом район та рівень шуму до кожного об'єкта, якщо їх немає в MockAPI
+    const districtsList = ["Галицький", "Франківський", "Шевченківський", "Сихівський", "Личаківський", "Залізничний"];
+    
+    sensors = rawData.map((item, index) => {
+      return {
+        ...item,
+        // Якщо в MockAPI немає району, призначаємо його циклично за індексом
+        district: item.district || districtsList[index % districtsList.length],
+        // Якщо немає рівню шуму, генеруємо стабільне значення
+        noiseLevel: item.noiseLevel || (45 + (index * 7) % 45)
+      };
+    });
+
     renderSensors(sensors); // Виводимо всі дані на сторінку
 
   } catch (error) {
